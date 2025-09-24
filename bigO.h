@@ -49,10 +49,9 @@ void clearScreen() { printf(ESC"[2J"); }
 
 int lineStart;
 int current = 0;
-int N;
 #define LABELCOUNT LINECOUNT + 1
 #define VARCOUNT 100
-#define START(n_) N = n_; lineStart = __LINE__ + 1;
+#define START lineStart = __LINE__ + 1;
 
 int lines[LINECOUNT] = { 0 };
 const char* lineStr[LINECOUNT];
@@ -87,7 +86,6 @@ void printLines()
 {
 	hideCursor();
 	resetCursor();
-	printf("n=%d                                                                    \n", N);
 
 	for (int i = 0; i < varsCount; i++)
 	{
