@@ -33,9 +33,8 @@ void sleep(unsigned ms)
 int lineStart;
 int current = 0;
 int N;
-#define LINECOUNT 18
 #define LABELCOUNT LINECOUNT + 1
-
+#define VARCOUNT 100
 #define START(n_) N = n_; lineStart = __LINE__ + 1;
 
 int lines[LINECOUNT] = { 0 };
@@ -47,9 +46,9 @@ void lineInc(int line)
 	lines[line]++;
 }
 
-int* varPtrs[100] = { 0 };
-const char* varNames[100] = { 0 };
-int varArrCounts[100] = { 0 };
+int* varPtrs[VARCOUNT] = { 0 };
+const char* varNames[VARCOUNT] = { 0 };
+int varArrCounts[VARCOUNT] = { 0 };
 int varsCount = 0;
 void trackVar(void** ptr, const char* name, ...)
 {
@@ -113,7 +112,7 @@ void printLines()
 	sleep(sleepTime);
 }
 
-#define L(line) lineStr[__LINE__ - lineStart] = #line; lineInc(__LINE__ - lineStart); current = __LINE__ - lineStart; printLines(); line
+#define L(line) lineStr[__LINE__ - lineStart] = #line; lineInc(__LINE__ - lineStart); current = __LINE__ - lineStart; printLines(); line;
 #define LABEL(label) label: labels[__LINE__ - lineStart] = #label ":";
 #define END current = __LINE__ - lineStart; printLines();
 
