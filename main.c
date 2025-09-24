@@ -28,16 +28,19 @@
 // This is because when it gets to a line, it sets the string buffer to the line content
 // REMEMBER TO SET LINE COUNT MANUALLY BEFORE THE INCLUDE
 
-// You can set the step delay by setting sleepTime in milliseconds
-// GCC complains about sleep redef, even tho sleep is depricated, so I renamed sleep to step
-
 // Make sure to enable virtual terminal sequences, so the display can look nice
 // Call enableVT()
 // I know Windows is stupid and doesn't have it by default
+// Seems like Linux does
 // You may have to implement it for your platform (should hopefully be simple)
 // Also sleep may be different on your platform
+// Should be implemented for unix and windows
+// You can set the step delay by setting sleepTime in milliseconds
+// GCC complains about sleep redef, even tho sleep is depricated, so I renamed sleep to step
 // And if you have any display issues, check the ESC code define, 
 // windows uses \x1B, unix mostly seems to use \33
+
+// This will NOT work for recursion without heavy modification
 
 #define LINECOUNT 18
 #include "bigO.h"
