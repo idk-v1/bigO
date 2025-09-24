@@ -7,8 +7,9 @@
 
 #ifdef _WIN32
 #include <Windows.h>
-#elif
+#else
 #include <time.h>
+#include <unistd.h>
 #endif
 void enableVT()
 {
@@ -21,7 +22,7 @@ void enableVT()
 #endif
 }
 
-void sleep(unsigned ms)
+void step(unsigned ms)
 {
 #ifdef _WIN32
 	Sleep(ms);
@@ -34,9 +35,17 @@ void sleep(unsigned ms)
 }
 
 #ifdef _WIN32
-#define ESC "\x1B"
-#elif
-#define ESC "\33"
+void hideCursor() {	printf("\x1B[?25l"); }
+void showCursor() {	printf("\x1B[?25h"); }
+void resetCursor() { printf("\x1B[1;1H"); }
+void highlight() { printf("\x1B[7m"); }
+void unhighlight() { printf("\x1B[0m"); }
+#else
+void hideCursor() { printf("\33[?25l"); }
+void showCursor() { printf("\33[?25h"); }
+void resetCursor() { printf("\33[1;1H"); }
+void highlight() { printf("\33[7m"); }
+void unhighlight() { printf("\33[0m"); }
 #endif
 
 
@@ -72,14 +81,15 @@ void trackVar(void** ptr, const char* name, ...)
 
 	varsCount++;
 }
-#define TRACK_VAR(var, ...) trackVar(&var, #var, __VA_ARGS__, 0)
+#define TRACK_VAR(var, ...) trackVar(&var, #var, ##__VA_ARGS__, 0)
 
 unsigned sleepTime = 100;
 
 void printLines()
 {
-	printf(ESC"[?25l"ESC"[1;1H");
-	printf("n=%d\n", N);
+	hideCursor();
+	resetCursor();
+	printf("n=%d                                                                    \n", N);
 
 	for (int i = 0; i < varsCount; i++)
 	{
@@ -90,14 +100,14 @@ void printLines()
 			{
 				printf("%d", varPtrs[i][ii]);
 				if (ii + 1 == varArrCounts[i])
-					printf("}                                 \n");
+					printf("}                                                           \n");
 				else
 					printf(", ");
 			}
 		}
 		else
 		{
-			printf("%s = %d                                 \n", varNames[i], *varPtrs[i]);
+			printf("%s = %d                                            \n", varNames[i], *varPtrs[i]);
 		}
 	}
 	printf("-------------------------------------------------------------------------\n");
@@ -109,17 +119,19 @@ void printLines()
 		else
 			printf("               ");
 
-		printf("%s%3d %-50s %3d"ESC"[0m\n",
-			current == i ? ESC"[7m" : "",
+		if (current == i)
+			highlight();
+		printf("%3d %-50s %3d\n",
 			i,
 			lineStr[i] ? lineStr[i] : "------- NOT EXECUTED -------",
 			lines[i]);
+		unhighlight();
 	}
 	if (labels[LINECOUNT])
 		printf("%-14s\n", labels[LINECOUNT]);
 
 	printf("                                                              \n");
-	sleep(sleepTime);
+	step(sleepTime);
 }
 
 #define L(line) lineStr[__LINE__ - lineStart] = #line; lineInc(__LINE__ - lineStart); current = __LINE__ - lineStart; printLines(); line;

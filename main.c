@@ -31,6 +31,12 @@
 #define LINECOUNT 18
 #include "bigO.h"
 
+#include <limits.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <stdbool.h>
+
 void bubblesort(int x[], int n)
 {
 	int i = 0, ii = 0, temp = 0;
