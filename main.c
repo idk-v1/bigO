@@ -20,7 +20,15 @@
 
 // You can set the step delay by setting sleepTime in milliseconds
 
-#define LINECOUNT 180
+// Make sure to enable virtual terminal sequences, so the display can look nice
+// Call enableVT()
+// I know Windows is stupid and doesn't have it by default
+// You may have to implement it for your platform (should hopefully be simple)
+// Also sleep may be different on your platform
+// And if you have any display issues, check the ESC code define, 
+// windows uses \x1B, unix mostly seems to use \33
+
+#define LINECOUNT 18
 #include "bigO.h"
 
 void bubblesort(int x[], int n)

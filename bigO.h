@@ -7,8 +7,9 @@
 
 #ifdef _WIN32
 #include <Windows.h>
+#elif
+#include <time.h>
 #endif
-
 void enableVT()
 {
 #ifdef _WIN32
@@ -25,9 +26,18 @@ void sleep(unsigned ms)
 #ifdef _WIN32
 	Sleep(ms);
 #else
-	sleep(ms);
+	struct timespec time;
+	time.tv_sec = ms / 1000;
+	time.tv_nsec = ms % 1000 * 1000000ULL;
+	nanosleep(&time, NULL);
 #endif
 }
+
+#ifdef _WIN32
+#define ESC "\x1B"
+#elif
+#define ESC "\33"
+#endif
 
 
 int lineStart;
@@ -68,7 +78,7 @@ unsigned sleepTime = 100;
 
 void printLines()
 {
-	printf("\x1B[?25l\x1B[1;1H");
+	printf(ESC"[?25l"ESC"[1;1H");
 	printf("n=%d\n", N);
 
 	for (int i = 0; i < varsCount; i++)
@@ -99,8 +109,8 @@ void printLines()
 		else
 			printf("               ");
 
-		printf("%s%3d %-50s %3d\x1B[0m\n",
-			current == i ? "\x1B[7m" : "",
+		printf("%s%3d %-50s %3d"ESC"[0m\n",
+			current == i ? ESC"[7m" : "",
 			i,
 			lineStr[i] ? lineStr[i] : "------- NOT EXECUTED -------",
 			lines[i]);
