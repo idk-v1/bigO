@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include <time.h>
 
 void bubblesort(int x[], int n)
 {
@@ -91,12 +92,17 @@ int main(int argc, char** argv)
 {
 	enableVT();
 	clearScreen();
+	srand(time(NULL));
 
-	int x[] = { 57,37,8,7,6,};
-	int n = sizeof(x) / sizeof(int);
+	int n = 10;
+	int* x = malloc(sizeof(int) * n);
+	for (int i = 0; i < n; i++)
+		x[i] = rand() % 20;
 	sleepTime = 200;
 	//bubblesort(x, n);
 	selectionsort(x, n);
+
+	free(x);
 
 	showCursor();
 	return 0;
