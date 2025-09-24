@@ -1,48 +1,3 @@
-// Very hacky, you NEED to set line count manually BEFORE INCLUDING "bigO.h"
-// Empty lines are counted in line count and will always show up as ------- NOT EXECUTED -------
-
-// To compile:
-// MSVC: Just hit run
-// GCC: (Not g++) gcc -fpermissive main.c
-
-// To display variables, call TRACK_VAR(var, [opt]size) on them
-// Currently only ints are supported
-// To use an array, specify a size after the var
-// Do NOT use specify a size on a non array
-
-// To begin the program, before the first line, put START
-// Ending the program, put END. Not necessary, just cleans up the highlight state
-
-// Each line should be wrapped in L()
-// ifs should be specified with IF(cond), IF_GOTO needs to come immediately after
-// gotos after an if NEED to be IF_GOTO(label) because of bracket hacks
-// normal gotos are specified by GOTO(label)
-// LABELS do NOT count as lines, do NOT put them on their own line
-// Semicolons are not needed, but shouldnt hurt
-// You can declare variables in lines, not needed to put at top, just you can't track those
-
-// To make a label, put LABEL(name). Your editor will complain about EVERYTHING, its fine
-
-// Other limitations:
-// Lines not visited yet will be displayed as ------- NOT EXECUTED -------
-// This is because when it gets to a line, it sets the string buffer to the line content
-// REMEMBER TO SET LINE COUNT MANUALLY BEFORE THE INCLUDE
-
-// Make sure to enable virtual terminal sequences, so the display can look nice
-// Call enableVT()
-// I know Windows is stupid and doesn't have it by default
-// Seems like Linux does
-// You may have to implement it for your platform (should hopefully be simple)
-// Also sleep may be different on your platform
-// Should be implemented for unix and windows
-// You can set the step delay by setting sleepTime in milliseconds
-// GCC complains about sleep redef, even tho sleep is depricated, so I renamed sleep to step
-// And if you have any display issues, check the ESC code define, 
-// windows uses \x1B, unix mostly seems to use \33
-
-// This will NOT work for recursion without heavy modification
-
-#define LINECOUNT 18
 #include "bigO.h"
 
 #include <limits.h>
@@ -54,12 +9,13 @@
 void bubblesort(int x[], int n)
 {
 	int i = 0, ii = 0, temp = 0;
+	INIT();
 	TRACK_VAR(i);
 	TRACK_VAR(ii);
 	TRACK_VAR(temp);
 	TRACK_VAR(x, n);
 
-						START
+						START() 
 						L(i = 0)
 						L(ii = 0)
 						L(temp = 0)
@@ -77,13 +33,13 @@ LABEL(EndIf)			L(ii = ii + 1)
 						L(GOTO(InnerLoop))
 LABEL(InnerLoopEnd)		L(i = i + 1)
 						L(GOTO(OuterLoop))
-LABEL(OuterLoopEnd)		END
+LABEL(OuterLoopEnd)		END()
 }
 
 void selectionsort(int x[], int n)
 {
 	int smallest = 0, index = 0, temp = 0, i = 0, ii = 0;
-
+	INIT();
 	TRACK_VAR(n);
 	TRACK_VAR(smallest);
 	TRACK_VAR(index);
@@ -92,7 +48,7 @@ void selectionsort(int x[], int n)
 	TRACK_VAR(ii);
 	TRACK_VAR(x, n);
 
-					START
+					START() 
 					L(i = 0)
 LABEL(OuterLoop)	L(IF (i >= n - 1))
 					L(IF_GOTO(EndOuterLoop))
@@ -111,7 +67,7 @@ LABEL(EndInnerLoop)	L(temp = x[i])
 					L(x[index] = temp)
 					L(i = i + 1)
 					L(GOTO(OuterLoop))
-LABEL(EndOuterLoop) END
+LABEL(EndOuterLoop) END()
 
 	//for (i = 0; i < n - 1; i++)
 	//{

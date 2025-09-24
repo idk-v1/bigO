@@ -1,3 +1,46 @@
+// To compile:
+// MSVC: Just hit run
+// GCC: (Not g++) gcc -fpermissive main.c
+
+// To display variables, call TRACK_VAR(var, [opt]size) on them
+// Currently only ints are supported
+// To use an array, specify a size after the var
+// Do NOT use specify a size on a non array
+
+// To begin the program, call INIT(), then you can track variables.
+// JUST before the first line, put START()
+// Ending the program, put END() IMMEDIATELY after the last line
+
+// Each line should be wrapped in L()
+// ifs should be specified with IF(cond), IF_GOTO needs to come immediately after
+// gotos after an if NEED to be IF_GOTO(label) because of bracket hacks
+// normal gotos are specified by GOTO(label)
+// LABELS do NOT count as lines, do NOT put them on their own line
+// Semicolons are not needed
+// You can declare variables in lines, not needed to put at top, just you can't track those
+
+// To make a label, put LABEL(name). Your editor will complain about EVERYTHING, its fine
+
+// Other limitations:
+// Lines not visited yet will be displayed as ------- NOT EXECUTED -------
+// This is because when it gets to a line, it sets the string buffer to the line content
+// Empty lines are counted in line count and will always show up as ------- NOT EXECUTED -------
+
+// Make sure to enable virtual terminal sequences, so the display can look nice
+// Call enableVT()
+// I know Windows is stupid and doesn't have it by default
+// Seems like Linux does
+// You may have to implement it for your platform (should hopefully be simple)
+// Also sleep may be different on your platform
+// Should be implemented for unix and windows
+// You can set the step delay by setting sleepTime in milliseconds
+// GCC complains about sleep redef, even tho sleep is depricated, so I renamed sleep to step
+// And if you have any display issues, check the ESC code define, 
+// windows uses \x1B, unix mostly seems to use \33
+
+// This will NOT work for recursion without heavy modification
+
+
 #pragma once
 #include <stdio.h>
 #include <stdlib.h>
@@ -49,22 +92,19 @@ void clearScreen() { printf(ESC"[2J"); }
 
 int lineStart;
 int current = 0;
-#define LABELCOUNT LINECOUNT + 1
-#define VARCOUNT 100
-#define START lineStart = __LINE__ + 1;
 
-int lines[LINECOUNT] = { 0 };
-const char* lineStr[LINECOUNT];
-const char* labels[LABELCOUNT] = { "" };
+int* lines = NULL;
+const char** lineStr = NULL;
+const char** labels = NULL;
 
 void lineInc(int line)
 {
 	lines[line]++;
 }
 
-int* varPtrs[VARCOUNT] = { 0 };
-const char* varNames[VARCOUNT] = { 0 };
-int varArrCounts[VARCOUNT] = { 0 };
+int** varPtrs = NULL;
+const char** varNames;
+int* varArrCounts;
 int varsCount = 0;
 void trackVar(void** ptr, const char* name, ...)
 {
@@ -81,6 +121,8 @@ void trackVar(void** ptr, const char* name, ...)
 #define TRACK_VAR(var, ...) trackVar(&var, #var, ##__VA_ARGS__, 0)
 
 unsigned sleepTime = 100;
+
+int lineCount = 0;
 
 void printLines()
 {
@@ -108,7 +150,7 @@ void printLines()
 	}
 	printf("-------------------------------------------------------------------------\n");
 
-	for (int i = 0; i < LINECOUNT; i++)
+	for (int i = 0; i < lineCount; i++)
 	{
 		if (labels[i])
 			printf("%-14s ", labels[i]);
@@ -123,16 +165,26 @@ void printLines()
 			lines[i]);
 		unhighlight();
 	}
-	if (labels[LINECOUNT])
-		printf("%-14s\n", labels[LINECOUNT]);
+	if (labels[lineCount])
+		printf("%-14s\n", labels[lineCount]);
 
 	printf("                                                              \n");
 	step(sleepTime);
 }
 
+void* zalloc(size_t size)
+{
+	void* ret = malloc(size);
+	if (ret)
+		memset(ret, 0, size);
+	return ret;
+}
+
+#define INIT() goto _START_LBL; _INIT_LBL: lines = zalloc(sizeof(int) * lineCount); lineStr = zalloc(sizeof(char*) * lineCount); labels = zalloc(sizeof(char*) * (lineCount + 1)); varPtrs = zalloc(sizeof(int*) * lineCount); varNames = zalloc(sizeof(char*) * lineCount); varArrCounts = zalloc(sizeof(int) * lineCount);
+#define START() goto _START_SKIP; _START_LBL: lineStart = __LINE__ + 1; goto _END_LBL; _START_SKIP:;
 #define L(line) lineStr[__LINE__ - lineStart] = #line; lineInc(__LINE__ - lineStart); current = __LINE__ - lineStart; printLines(); line;
 #define LABEL(label) label: labels[__LINE__ - lineStart] = #label ":";
-#define END current = __LINE__ - lineStart; printLines();
+#define END() current = __LINE__ - lineStart; printLines(); goto _SKIP_END_LBL; _END_LBL: lineCount = __LINE__ - lineStart; goto _INIT_LBL; _SKIP_END_LBL: free(lines); free(lineStr); free(labels); free(varPtrs); free(varNames); free(varArrCounts);
 
 #define IF(cond) if (cond) {
 #define IF_GOTO(label) goto label;}
