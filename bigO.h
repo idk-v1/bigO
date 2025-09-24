@@ -35,18 +35,16 @@ void step(unsigned ms)
 }
 
 #ifdef _WIN32
-void hideCursor() {	printf("\x1B[?25l"); }
-void showCursor() {	printf("\x1B[?25h"); }
-void resetCursor() { printf("\x1B[1;1H"); }
-void highlight() { printf("\x1B[7m"); }
-void unhighlight() { printf("\x1B[0m"); }
+#define ESC "\x1B"
 #else
-void hideCursor() { printf("\33[?25l"); }
-void showCursor() { printf("\33[?25h"); }
-void resetCursor() { printf("\33[1;1H"); }
-void highlight() { printf("\33[7m"); }
-void unhighlight() { printf("\33[0m"); }
+#define ESC "\33"
 #endif
+void hideCursor() { printf(ESC"[?25l"); }
+void showCursor() { printf(ESC"[?25h"); }
+void resetCursor() { printf(ESC"[1;1H"); }
+void highlight() { printf(ESC"[7m"); }
+void unhighlight() { printf(ESC"[0m"); }
+void clearScreen() { printf(ESC"[2J"); }
 
 
 int lineStart;

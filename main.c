@@ -119,6 +119,7 @@ LABEL(EndOuterLoop) END
 int main(int argc, char** argv)
 {
 	enableVT();
+	clearScreen();
 
 	int x[] = { 57,37,8,7,6,};
 	int n = sizeof(x) / sizeof(int);
@@ -126,5 +127,6 @@ int main(int argc, char** argv)
 	//bubblesort(x, n);
 	selectionsort(x, n);
 
+	showCursor();
 	return 0;
 }
