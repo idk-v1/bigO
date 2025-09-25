@@ -126,7 +126,6 @@ int lineCount = 0;
 
 void printLines()
 {
-	hideCursor();
 	resetCursor();
 
 	for (int i = 0; i < varsCount; i++)
@@ -148,18 +147,19 @@ void printLines()
 			printf("%s = %d                                            \n", varNames[i], *varPtrs[i]);
 		}
 	}
-	printf("-------------------------------------------------------------------------\n");
+	printf("-----------------------------------------------------------------------------\n");
 
 	for (int i = 0; i < lineCount; i++)
 	{
+		if (current == i)
+			highlight();
+
 		if (labels[i])
 			printf("%-14s ", labels[i]);
 		else
 			printf("               ");
 
-		if (current == i)
-			highlight();
-		printf("%3d %-50s %3d\n",
+		printf("%3d %-50s %7d\n",
 			i,
 			lineStr[i] ? lineStr[i] : "------- NOT EXECUTED -------",
 			lines[i]);
