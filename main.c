@@ -20,12 +20,12 @@ void bubblesort(int x[], int n)
 						START();
 L(						i = 0							);
 LABEL(OuterLoop) L(		IF (i >= n)						);
-L(						IF_GOTO(OuterLoopEnd)			);
+L(							GOTO(OuterLoopEnd)			);}
 L(						ii = 0							);
 LABEL(InnerLoop) L(		IF (ii >= n - 1 - i)			);
-L(						IF_GOTO(InnerLoopEnd)			);
+L(							GOTO(InnerLoopEnd)			);}
 L(						IF (x[ii] <= x[ii + 1])			);
-L(						IF_GOTO(EndIf)					);
+L(							GOTO(EndIf)					);}
 L(						temp = x[ii + 1]				);
 L(						x[ii + 1] = x[ii]				);
 L(						x[ii] = temp					);
@@ -51,13 +51,13 @@ void selectionsort(int x[], int n)
 						START();
 L(						i = 0							);
 LABEL(OuterLoop) L(		IF (i >= n - 1)					);
-L(						IF_GOTO(EndOuterLoop)			);
+L(							GOTO(EndOuterLoop)			);}
 L(						smallest = INT_MAX				);
 L(						ii = i							);
 LABEL(InnerLoop) L(		IF(ii >= n)						);
-L(						IF_GOTO(EndInnerLoop)			);
+L(							GOTO(EndInnerLoop)			);}
 L(						IF (x[ii] >= smallest)			);
-L(						IF_GOTO(EndIf)					);
+L(							GOTO(EndIf)					);}
 L(						smallest = x[ii]				);
 L(						index = ii						);
 LABEL(EndIf) L(			ii = ii + 1						);

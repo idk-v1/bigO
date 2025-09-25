@@ -12,9 +12,9 @@
 // Ending the program, put END() IMMEDIATELY after the last line
 
 // Each line should be wrapped in L()
-// ifs should be specified with IF(cond), IF_GOTO needs to come immediately after
-// gotos after an if NEED to be IF_GOTO(label) because of bracket hacks
-// normal gotos are specified by GOTO(label)
+// ifs should be specified with IF(cond)
+// any line after an if NEEDS to have a closing bracket } at the end of its line
+// gotos are specified by GOTO(label)
 // LABELS do NOT count as lines, do NOT put them on their own line
 // Semicolons are not needed
 // You can declare variables in lines, not needed to put at top, just you can't track those
@@ -187,7 +187,6 @@ void* zalloc(size_t size)
 #define END() current = __LINE__ - lineStart; printLines(); goto _SKIP_END_LBL; _END_LBL: lineCount = __LINE__ - lineStart; goto _INIT_LBL; _SKIP_END_LBL: free(lines); free(lineStr); free(labels); free(varPtrs); free(varNames); free(varArrCounts);
 
 #define IF(cond) if (cond) {
-#define IF_GOTO(label) goto label;}
 #define GOTO(label) goto label;
 #define IS_NOT !=
 #define IS ==
